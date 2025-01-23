@@ -207,7 +207,8 @@ async function createZohoInvoice(transactionDetails, zohoOrgId, zohoAccessToken,
         item_id: itemId,
         description: "Stripe Clearing",
         rate: transactionDetails.amount,
-        quantity: 1
+        quantity: 1,
+        tax_id: taxId
       }
     ],
     is_inclusive_tax: zohoTaxInclusive //Fixed for now based on wrangler var.
