@@ -13,13 +13,13 @@ enabled = true
 head_sampling_rate = 1
 
 [env.production]
-vars = { WRANGLER_DEV = "false",  DEPOSIT_TO = "Stripe Clearing", MODE = "Stripe", ZOHO_ZONE = ".com.au"  }
+vars = { WRANGLER_DEV = "false",  DEPOSIT_TO = "Stripe Clearing", MODE = "Stripe", ZOHO_ZONE = ".com.au", DEFAULT_CURRENCY = "NZD", ZOHO_TAX_NAME = "NZ GST", TAX_INCLUSIVE = "true" }
 kv_namespaces = [
   { binding = "KV", id = "xxx" }
 ]
 
 [env.dev]
-vars = { WRANGLER_DEV = "true",  DEPOSIT_TO = "Stripe Clearing", MODE = "Stripe", ZOHO_ZONE = ".com.au"  }
+vars = { WRANGLER_DEV = "true",  DEPOSIT_TO = "Stripe Clearing", MODE = "Stripe", ZOHO_ZONE = ".com.au", DEFAULT_CURRENCY = "NZD", ZOHO_TAX_NAME = "NZ GST", TAX_INCLUSIVE = "true" }
 kv_namespaces = [
   { binding = "KV", id = "xxx", preview_id = "xxx" }
 ]

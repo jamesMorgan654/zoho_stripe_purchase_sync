@@ -9,6 +9,9 @@ export default {
       // Check if running in the Wrangler development environment
       const isLocal = env.WRANGLER_DEV === 'true';
       const zohoZone = env.ZOHO_ZONE;
+      const defaultCurrency = env.DEFAULT_CURRENCY;
+      const zohoTaxName = env.ZOHO_TAX_NAME;
+      const zohoTaxInclusive = env.TAX_INCLUSIVE === 'true';
       const clientId = await env.KV.get("ZOHO_CLIENT_ID");
       if (!clientId) {
         console.log("Zoho client id not found");
@@ -57,7 +60,7 @@ export default {
         if (!stripeSignature) {
             return new Response('Stripe signature missing or invalid', { status: 400 });
         }
-        const transactionDetails = await readWebhook(stripeSignature, stripeKey, stripeWebhookSecret, rawPayload, stripeAccountId)
+        const transactionDetails = await readWebhook(stripeSignature, stripeKey, stripeWebhookSecret, rawPayload, defaultCurrency, stripeAccountId)
         if (transactionDetails) {
           const zohoDepositTo = env.DEPOSIT_TO;
           const zohoMode = env.MODE;
@@ -71,7 +74,7 @@ export default {
             console.log("Zoho Org id not found");
             return new Response('Environment details not found', { status: 400 });
           }
-          const successfullyPushed = await pushToZoho(clientId, clientSecret, zohoRefreshToken, zohoOrgId, transactionDetails, zohoDepositTo, zohoMode, zohoZone);
+          const successfullyPushed = await pushToZoho(clientId, clientSecret, zohoRefreshToken, zohoOrgId, transactionDetails, zohoDepositTo, zohoMode, zohoZone, zohoTaxName, zohoTaxInclusive);
           if (successfullyPushed) {
             return new Response("Successful", { status: 200 });
           } else {

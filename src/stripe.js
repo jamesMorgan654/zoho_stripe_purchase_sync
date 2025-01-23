@@ -17,7 +17,7 @@ async function validateStripeSignature(stripe, stripeSignature, stripeWebhookSec
 }
 
 // Helper to extract transaction details
-function extractTransactionDetails(event) {
+function extractTransactionDetails(event, defaultCurrency) {
     /*
     Assumes that all of the required details are there in the rawPayload object from the webhook
     */
@@ -38,7 +38,7 @@ function extractTransactionDetails(event) {
         // Calculating the amount based on fx in payload
         const amount = checkoutSession.amount_total; // In cents
         const fx = parseFloat(checkoutSession.currency_conversion?.fx_rate || "1"); // Default fx_rate to 1 if missing
-        const currency = checkoutSession.currency_conversion?.source_currency?.toUpperCase() || "UNKNOWN";
+        const currency = checkoutSession.currency_conversion?.source_currency?.toUpperCase() || defaultCurrency;
 
         if (!fx || fx <= 0) {
             throw new Error("Invalid or missing fx_rate in currency_conversion");
@@ -60,7 +60,7 @@ function extractTransactionDetails(event) {
     return new Response('Wrong event type', { status: 202 });
 }
 
-async function readWebhook(stripeSignature, stripeKey, stripeWebhookSecret, rawPayload, stripeAccountId = false) {
+async function readWebhook(stripeSignature, stripeKey, stripeWebhookSecret, rawPayload, defaultCurrency, stripeAccountId = false) {
     /*
     Uses the Stripe API to fetch the transaction details that come from a stripe webhook.
     It uses the signature to verify the webhook and then fetches the transaction details.
@@ -82,7 +82,7 @@ async function readWebhook(stripeSignature, stripeKey, stripeWebhookSecret, rawP
             // Keep the name as 'Unknown Stripe Account' if API call fails
         }
     }
-    const transactionDetails = extractTransactionDetails(event);
+    const transactionDetails = extractTransactionDetails(event, defaultCurrency);
     return {
         stripeAccountName,
         transactionDetails
