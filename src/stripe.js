@@ -46,6 +46,8 @@ function extractTransactionDetails(event, defaultCurrency) {
 
         const localAmount = (amount / fx) / 100; // Convert cents to dollars and apply conversion
 
+        const amountTax = checkoutSession.total_details?.amount_tax || 0;
+        const taxApplied = amountTax > 0;
         return {
             transactionId: checkoutSession.payment_intent,
             amount: parseFloat(localAmount.toFixed(2)), // Convert cents to dollars
@@ -53,6 +55,7 @@ function extractTransactionDetails(event, defaultCurrency) {
             description: checkoutSession.description || 'No description provided',
             status: checkoutSession.status,
             transactionDate: formattedDate,
+            taxApplied: taxApplied
         };
     }
 

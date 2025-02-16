@@ -197,28 +197,28 @@ async function createZohoInvoice(transactionDetails, zohoOrgId, zohoAccessToken,
   const currencyId = await getCurrencyId(currencyCode, zohoOrgId, zohoAccessToken, zohoZone);
   const taxId = await getTaxId(zohoTaxName, zohoOrgId, zohoAccessToken, zohoZone);
   const itemId = await getItemId(zohoOrgId, zohoAccessToken, zohoZone);
+  const taxApplied = transactionDetails.taxApplied
+  let lineItem = {
+    item_id: itemId,
+    description: "Stripe Clearing",
+    rate: transactionDetails.amount,
+    quantity: 1 
+  }
   let body = {
     customer_id: customerId,
     invoice_number: transactionDetails.transactionId, 
     reference_number: transactionDetails.transactionId,
     date: transactionDetails.transactionDate, 
-    line_items: [
-      {
-        item_id: itemId,
-        description: "Stripe Clearing",
-        rate: transactionDetails.amount,
-        quantity: 1,
-        tax_id: taxId
-      }
-    ],
-    is_inclusive_tax: zohoTaxInclusive //Fixed for now based on wrangler var.
   };
+  if (taxApplied && taxId) {
+    lineItem.tax_id = taxId;
+    body.is_inclusive_tax = zohoTaxInclusive;
+    body.taxId = taxId;
+  }
+  body.line_items = [lineItem];
   // Add in currency and tax if available
   if (currencyId) {
     body.currency_id = currencyId;
-  }
-  if (taxId) {
-    body.taxId = taxId;
   }
   const options = {
     method: 'POST',
