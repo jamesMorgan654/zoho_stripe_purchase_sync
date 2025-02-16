@@ -1,4 +1,4 @@
-# Zoho Books Sync Stripe Payments CloudFlare Worker
+# Sync Stripe ecommerce payments with Zoho Books using a CloudFlare Worker
 
 This is a cloudflare worker to listen for a webhook from stripe payments, then forwarding the data onto zoho books.  It is a fairly simple setup and can be scaled across any account.  
 
